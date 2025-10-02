@@ -2,7 +2,7 @@ name: Run JMeter Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
 
 jobs:
@@ -25,18 +25,30 @@ jobs:
           tar -xzf jmeter.tgz
           mv apache-jmeter-5.6.3 jmeter
 
-      - name: Run JMeter test (non-GUI mode)
+      # Executa o primeiro teste
+      - name: Run JMeter test 01 (non-GUI mode)
         run: |
           ./jmeter/bin/jmeter \
             -n \
             -t tests/testes-api-01.jmx \
-            -l results.jtl \
-            -e -o results-report
+            -l results-01.jtl \
+            -e -o reports-01
+
+      # Executa o segundo teste
+      - name: Run JMeter test 02 (non-GUI mode)
+        run: |
+          ./jmeter/bin/jmeter \
+            -n \
+            -t tests/testes-api-02.jmx \
+            -l results-02.jtl \
+            -e -o reports-02
 
       - name: Upload JMeter results (JTL + HTML report)
         uses: actions/upload-artifact@v4
         with:
           name: jmeter-report
           path: |
-            results.jtl
-            reports/**
+            results-01.jtl
+            reports-01/**
+            results-02.jtl
+            reports-02/**
